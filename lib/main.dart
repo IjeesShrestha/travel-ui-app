@@ -1,8 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:travel_ui_app/screens/home_screen.dart';
+import 'package:travel_ui_app/route_generator.dart';
+
 import 'package:sizer/sizer.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -12,8 +16,6 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeSec = ThemeData();
-
     return Sizer(
         builder: (context, orientation, deviceType) => MaterialApp(
               title: 'Flutter Travel UI',
@@ -51,7 +53,8 @@ class MyApp extends StatelessWidget {
                     .copyWith(secondary: const Color(0xFFDBECF1)),
                 scaffoldBackgroundColor: const Color(0xFFF3F5F7),
               ),
-              home: const MyHomePage(title: 'HomePage'),
+              initialRoute: '/login_screen',
+              onGenerateRoute: RouteGenerator.generateRoute,
             ));
   }
 }

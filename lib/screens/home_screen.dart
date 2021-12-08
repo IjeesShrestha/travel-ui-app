@@ -1,8 +1,12 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
+import 'package:travel_ui_app/models/user_model.dart';
 import 'package:travel_ui_app/widgets/bottom_navigation_bar.dart';
 import 'package:travel_ui_app/widgets/destination_carousel.dart';
 import 'package:travel_ui_app/widgets/hotel_carousel.dart';
@@ -18,6 +22,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedTopIndex = 0;
+
   final List<IconData> _icons = [
     FontAwesomeIcons.plane,
     FontAwesomeIcons.bed,
@@ -53,6 +58,23 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+//recieve data from firebase
+  User? user = FirebaseAuth.instance.currentUser;
+  UserModel loggedInUser = UserModel();
+
+  @override
+  void initState() {
+    super.initState();
+    FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      loggedInUser = UserModel.fromMap(value.data());
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 right: 10.w,
               ),
               child: Text(
-                'Hi, What are you looking for?',
+                "Hi ${loggedInUser.firstName}, What are you looking for?",
                 style: Theme.of(context).textTheme.headline1,
               ),
             ),
@@ -99,76 +121,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-/** ***********Custom scroll view an alternative for the listview builder*********/
-
-// CustomScrollView(
-//   scrollDirection: Axis.horizontal,
-//   slivers: <Widget>[
-//     SliverList(
-
-//       delegate: SliverChildBuilderDelegate(
-//         (context, index) => _buildIcon(index),
-//         childCount: _icons.length,
-//       ),
-//     ),
-//   ],
-// ),
-
-//*****listview of destinations****//
-// SizedBox(
-//   height: 200.0,
-//   child: SizedBox(
-//     child: ListView.separated(
-//       separatorBuilder: (BuildContext context, int index) =>
-//           Container(
-//         width: 10,
-//       ),
-//       scrollDirection: Axis.horizontal,
-//       itemCount: destinations.length,
-//       itemBuilder: (BuildContext context, int index) {
-//         return Container(
-//           margin: const EdgeInsets.all(8),
-//           height: 100,
-//           decoration: BoxDecoration(
-//               color: Colors.white70,
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: Colors.grey.withOpacity(0.5),
-//                   spreadRadius: 2,
-//                   blurRadius: 7,
-//                   offset: const Offset(
-//                       0, 3), // changes position of shadow
-//                 ),
-//               ],
-//               borderRadius: BorderRadius.circular(10.0)),
-//           child: Column(
-//             children: [
-//               Container(
-//                 decoration: BoxDecoration(
-//                     borderRadius: BorderRadius.circular(60.0)),
-//                 child: Image.asset(
-//                   destinations[index].imageUrl,
-//                   width: 150,
-//                   height: 140,
-//                   fit: BoxFit.cover,
-//                 ),
-//               ),
-//               const SizedBox(
-//                 height: 8,
-//               ),
-//               Text(
-//                 destinations[index].city,
-//                 style: const TextStyle(
-//                   fontSize: 16.0,
-//                   fontWeight: FontWeight.bold,
-//                 ),
-//               )
-//             ],
-
-//             // subtitle: ,
-//           ),
-//         );
-//       },
-//     ),
-//   ),
-// ),

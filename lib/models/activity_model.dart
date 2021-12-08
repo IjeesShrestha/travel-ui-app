@@ -1,7 +1,7 @@
 class Activity {
   final String imageUrl;
-  final double rating;
-  final double price;
+  final int rating;
+  final int price;
   final String type;
   final String name;
   final List<String> startTimes;
